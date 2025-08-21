@@ -1,0 +1,1 @@
+# ribeirense-projeto-react-native
