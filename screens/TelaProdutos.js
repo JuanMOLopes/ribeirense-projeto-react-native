@@ -9,10 +9,39 @@ import {
   SafeAreaView,
   Dimensions,
   ScrollView,
+  Alert,
 } from 'react-native';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 function TelaListaProdutos({ navigation }) {
+  // Estado que armazenará os dados do async storage
+  const [dadosCarregados, setDadosCarregados] = useState(null);
+
   const [tela, setTela] = useState(Dimensions.get('window'));
+
+  useEffect(() => {
+    const carregarDados = async () => {
+      try {
+        // Busca a string salva no AsyncStorage com a chave 'dadosDoUsuario'
+        const dadosEmString = await AsyncStorage.getItem('dadosDoUsuario');
+        if (dadosEmString !== null) {
+          // Converte a string de volta para um objeto (JSON.parse)
+          const dados = JSON.parse(dadosEmString);
+          setDadosCarregados(dados);
+          Alert.alert('Sucesso', 'Dados carregados!');
+        } else {
+          Alert.alert('Aviso', 'Nenhum dado encontrado.');
+          setDadosCarregados(null);
+        }
+      } catch (e) {
+        Alert.alert('Erro', 'Falha ao carregar dados.');
+        console.error(e);
+      }
+    };
+
+    carregarDados();
+  }, []);
 
   useEffect(() => {
     const callback = ({ window }) => setTela(window);
@@ -50,7 +79,7 @@ function TelaListaProdutos({ navigation }) {
       nome: 'Camisa Preta',
       preco: 159.99,
       imagem:
-        'https://lh4.googleusercontent.com/-Xt_JtfFWpUfBIb5txF-hIhQ3Oo08dNRF6IgzsYkLY5MilUoFMwiYZUdPP8EL9DeOjHJl_6QpvIiYmrK6qN5MCDHXoIMXZSjx8evJVMcqovCkgOhEp31eEjBg6ae3QdVFaDVnwoSgYOlHrLPWFK_XFiJhXx30XuUe902ZOuUsWvkIIfju0FcJQ=w1280',
+        'https://lh6.googleusercontent.com/9yDlR6n4yiVWMmZOUpABJi6r8dhM-sYE1D_cBr5ftRfPxXoHbCg8PFjhCOkPFHQ218ak6J3yS0jNysgNHBKC8zbYScFx9gfbfdup6cY9NOmAz1fTAj0entUmKERonZaAGie3exK1jh-XsHNSupyLfkeJrRgeiPYESaum9OeoLOuyID6OYRdk5A=w1280',
       descricao: 'Camisa preta do Ribeirense, edição limitada retrô.',
       estoque: 8,
       categoria: 'Camisa',
@@ -60,7 +89,7 @@ function TelaListaProdutos({ navigation }) {
       nome: 'Camisa Roxa - Goleiro',
       preco: 169.99,
       imagem:
-        'https://lh3.googleusercontent.com/KT3AXnEWIklLsfqbxFIrfnZq8UXSzY7uXWwK8Xyxf8PzR81RuIEK6c0YOUDxv0DgKnnDIKPlLib-M5VkAp35A_hXLAXmi_TQLTUwChSTuF6JIdL3cRM7KGztMxha1kRg-Bbyldc7O_fijNuWAYnDh96hvJvGCfSjWZYNywwEzZB0dHOYKmyAyA=w1280',
+        'https://lh5.googleusercontent.com/60tMxw5gcepdphivdzn5R_PVPXfPX3F7Yn6L4qC02RqkJZfN27PGftUnnKPao3kReU79Thul1tsS24nzdODZw_q1fSpGZHxaCQcuPJCXHZgUNgqYEgVO8FZZz3xKf3u1xeFY73UI0qrOTxIpYvWM76Zm-AxMoMi94I1ijn-x8vGHN9sTFdmYwQ=w1280',
       descricao:
         'Camisa roxa de goleiro do Ribeirense, design exclusivo da temporada.',
       estoque: 10,
@@ -178,6 +207,9 @@ function TelaListaProdutos({ navigation }) {
             style={estilos.logo}
           />
           <Text style={estilos.titulo}>RIBEIRENSE</Text>
+          <Text style={estilos.subtitulo}>
+            Seja bem vindo, {dadosCarregados ? dadosCarregados.apelido : ''}!
+          </Text>
         </View>
 
         <FlatList
@@ -199,9 +231,7 @@ function TelaListaProdutos({ navigation }) {
         </View>
 
         <View style={estilos.footer}>
-          <Text style={estilos.titulo}>
-            Projeto realizado por grupo 2
-          </Text>
+          <Text style={estilos.titulo}>Projeto realizado por grupo 2</Text>
 
           <View style={estilos.lista}>
             <Text style={estilos.integrante}>• Agatha França</Text>
@@ -226,6 +256,14 @@ const estilos = StyleSheet.create({
   },
   titulo: {
     fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#fff',
+    textAlign: 'center',
+    marginTop: 6,
+  },
+  subtitulo: {
+    fontSize: 25,
     fontWeight: 'bold',
     marginBottom: 10,
     color: '#fff',
@@ -294,7 +332,7 @@ const estilos = StyleSheet.create({
     textAlign: 'center',
   },
   footer: {
-    backgroundColor: '#094fd3', 
+    backgroundColor: '#094fd3',
     padding: 16,
     alignItems: 'center',
     justifyContent: 'center',
