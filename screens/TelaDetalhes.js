@@ -82,13 +82,30 @@ function TelaDetalhesProduto({ route, navigation }) {
 
   const paisagem = tela.width > tela.height;
 
-  const adicionarALista = () => {
-    Alert.alert(
-      'Sucesso! 🎉',
-      `${quantidade} ${produtoSelecionado.nome} adicionado(s) a lista de desejos!`,
-      [{ text: 'Continuar Comprando', onPress: () => navigation.goBack() }]
-    );
-  };
+const adicionarAosDesejos = async () => {
+  try {
+    // pega a lista já existente
+    const listaDesejosString = await AsyncStorage.getItem('listaDesejos');
+    const listaDesejos = listaDesejosString ? JSON.parse(listaDesejosString) : [];
+
+    // verifica se já existe na lista
+    const jaExiste = listaDesejos.find(item => item.id === produtoSelecionado.id);
+    if (jaExiste) {
+      Alert.alert('Aviso', 'Esse item já está na sua lista de desejos.');
+      return;
+    }
+
+    // adiciona o novo produto
+    listaDesejos.push(produtoSelecionado);
+
+    await AsyncStorage.setItem('listaDesejos', JSON.stringify(listaDesejos));
+
+    Alert.alert('Sucesso', `${produtoSelecionado.nome} adicionado à lista de desejos!`);
+  } catch (e) {
+    console.error(e);
+    Alert.alert('Erro', 'Não foi possível adicionar à lista de desejos.');
+  }
+};
 
   const removerDalista = () => {
 
@@ -174,8 +191,8 @@ function TelaDetalhesProduto({ route, navigation }) {
       {/* Botão adicionar a lista de desejo */}
       <TouchableOpacity
         style={estilos.botaoComprar}
-        onPress={adicionarALista}>
-        <Text style={estilos.textoBotaoComprar}>🛒 Adicionar a lista de desejos</Text>
+        onPress={adicionarAosDesejos}>
+        <Text style={estilos.textoBotaoComprar}>🛒 Adicionar o produto aos desejos</Text>
       </TouchableOpacity>
 
  {/* Botão rmover da lsita de desejos */}
@@ -346,3 +363,4 @@ const estilos = StyleSheet.create({
 });
 
 export default TelaDetalhesProduto;
+
