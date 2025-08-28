@@ -15,7 +15,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 function TelaDetalhesProduto({ route, navigation }) {
   // Estado que armazenará os dados do async storage
   const [dadosCarregados, setDadosCarregados] = useState(null); // cria um estado que se inicia nulo
-  const [produtosSalvosCarregados, setProdutosSalvosCarregados] = useState(null); // cria um estado que se inicia nulo para pegar todos os produtos salvos
+  const [produtosSalvosCarregados, setProdutosSalvosCarregados] =
+    useState(null); // cria um estado que se inicia nulo para pegar todos os produtos salvos
 
   const { produtoSelecionado } = route.params;
   const [quantidade, setQuantidade] = useState(1);
@@ -23,9 +24,9 @@ function TelaDetalhesProduto({ route, navigation }) {
   // Rotação da tela
   const [tela, setTela] = useState(Dimensions.get('window'));
 
-// Carregar dados do usuário
+  // Carregar dados do usuário
   useEffect(() => {
-    // Função para carregar os dados do AsyncStorage, é executado quando a página carrega **** 
+    // Função para carregar os dados do AsyncStorage, é executado quando a página carrega ****
     const carregarDados = async () => {
       try {
         // Busca a string salva no AsyncStorage com a chave 'dadosDoUsuario'
@@ -44,13 +45,13 @@ function TelaDetalhesProduto({ route, navigation }) {
       }
     };
 
-    console.log(dadosCarregados); // pega todos os dados e exibe no console 
-    carregarDados(); //executa a função de cima 
+    console.log(dadosCarregados); // pega todos os dados e exibe no console
+    carregarDados(); //executa a função de cima
   }, []);
 
-// Carregar dados do produto
+  // Carregar dados do produto
   useEffect(() => {
-    // Função para carregar os dados do AsyncStorage, é executado quando a página carrega **** 
+    // Função para carregar os dados do AsyncStorage, é executado quando a página carrega ****
     const carregarDadosProduto = async () => {
       try {
         // Busca a string salva no AsyncStorage com a chave 'dadosProdutoSalvo'
@@ -70,8 +71,8 @@ function TelaDetalhesProduto({ route, navigation }) {
       }
     };
 
-    console.log(produtosSalvosCarregados); // pega todos os dados e exibe no console 
-    carregarDadosProduto(); //executa a função de cima 
+    console.log(produtosSalvosCarregados); // pega todos os dados e exibe no console
+    carregarDadosProduto(); //executa a função de cima
   }, []);
 
   // Carregar dados do produto
@@ -107,42 +108,68 @@ function TelaDetalhesProduto({ route, navigation }) {
 
   const paisagem = tela.width > tela.height;
 
-const adicionarAosDesejos = async () => {
-  try {
-    // pega a lista já existente
-    const listaDesejosString = await AsyncStorage.getItem('dadosProdutoSalvo');
-    const listaDesejos = listaDesejosString ? JSON.parse(listaDesejosString) : [];
+  const adicionarAosDesejos = async () => {
+    try {
+      // pega a lista já existente
+      const listaDesejosString = await AsyncStorage.getItem(
+        'dadosProdutoSalvo'
+      );
+      const listaDesejos = listaDesejosString
+        ? JSON.parse(listaDesejosString)
+        : [];
 
-    // verifica se já existe na lista
-    const jaExiste = listaDesejos.find(item => item.id === produtoSelecionado.id);
-    if (jaExiste) {
-      Alert.alert('Aviso', 'Esse item já está na sua lista de desejos.');
-      return;
+      // verifica se já existe na lista
+      const jaExiste = listaDesejos.find(
+        (item) => item.id === produtoSelecionado.id
+      );
+      if (jaExiste) {
+        Alert.alert('Aviso', 'Esse item já está na sua lista de desejos.');
+        return;
+      }
+
+      // adiciona o novo produto
+      listaDesejos.push(produtoSelecionado);
+
+      await AsyncStorage.setItem(
+        'dadosProdutoSalvo',
+        JSON.stringify(listaDesejos)
+      );
+
+      Alert.alert(
+        'Sucesso',
+        `${produtoSelecionado.nome} adicionado à lista de desejos!`
+      );
+    } catch (e) {
+      console.error(e);
+      Alert.alert('Erro', 'Não foi possível adicionar à lista de desejos.');
     }
+  };
 
-    // adiciona o novo produto
-    listaDesejos.push(produtoSelecionado);
+  const removerDalista = async (id) => {
+    try {
+      // filtra removendo pelo id
+      const listaAtualizada = produtosSalvosCarregados.filter(
+        (item) => item.id !== id
+      );
 
-    await AsyncStorage.setItem('dadosProdutoSalvo', JSON.stringify(listaDesejos));
+      // salva novamente no AsyncStorage
+      await AsyncStorage.setItem(
+        'dadosProdutoSalvo',
+        JSON.stringify(listaAtualizada)
+      );
 
-    Alert.alert('Sucesso', `${produtoSelecionado.nome} adicionado à lista de desejos!`);
-  } catch (e) {
-    console.error(e);
-    Alert.alert('Erro', 'Não foi possível adicionar à lista de desejos.');
-  }
-};
+      // atualiza o estado local também
+      setProdutosSalvosCarregados(listaAtualizada);
 
-  // função de remover da lista que usa o id como parâmetro
-  const removerDalista = (id) => {
-    // na lista de salvos eu devolvo todos os ids que não forem o do selecionado
-    const listaAtualizada = produtosSalvosCarregados.filter((_, e) => e !== id);
-    AsyncStorage.setItem('dadosDoUsuario', dadosEmString);
-
-    Alert.alert(
-      'Sucesso! 🎉',
-      `${quantidade} ${produtoSelecionado.nome} removido(s) da lista de desejos!`,
-      [{ text: 'Continuar Comprando', onPress: () => navigation.goBack() }]
-    );
+      Alert.alert(
+        'Sucesso! 🎉',
+        `${produtoSelecionado.nome} removido da lista de desejos!`,
+        [{ text: 'Continuar Comprando', onPress: () => navigation.goBack() }]
+      );
+    } catch (e) {
+      console.error(e);
+      Alert.alert('Erro', 'Não foi possível remover da lista.');
+    }
   };
 
   const alterarQuantidade = (incremento) => {
@@ -155,7 +182,8 @@ const adicionarAosDesejos = async () => {
   return (
     <ScrollView style={estilos.container}>
       <Text style={estilos.subtitulo}>
-        Obrigado por comprar conosco, {dadosCarregados ? dadosCarregados.apelido : ''}!
+        Obrigado por comprar conosco,{' '}
+        {dadosCarregados ? dadosCarregados.apelido : ''}!
       </Text>
       {/* Botão voltar */}
       <TouchableOpacity
@@ -220,16 +248,19 @@ const adicionarAosDesejos = async () => {
       <TouchableOpacity
         style={estilos.botaoComprar}
         onPress={adicionarAosDesejos}>
-        <Text style={estilos.textoBotaoComprar}>🛒 Adicionar o produto aos desejos</Text>
+        <Text style={estilos.textoBotaoComprar}>
+          🛒 Adicionar o produto aos desejos
+        </Text>
       </TouchableOpacity>
 
- {/* Botão rmover da lsita de desejos */}
+      {/* Botão rmover da lsita de desejos */}
       <TouchableOpacity
         style={estilos.botaoRemover}
-        onPress={removerDalista}>
-        <Text style={estilos.textoBotaoComprar}>🛒 Remover da lista de desejos</Text>
+        onPress={() => removerDalista(produtoSelecionado.id)}>
+        <Text style={estilos.textoBotaoComprar}>
+          🛒 Remover da lista de desejos
+        </Text>
       </TouchableOpacity>
-
 
       {/* Feedback de rotação */}
       <View
@@ -391,5 +422,3 @@ const estilos = StyleSheet.create({
 });
 
 export default TelaDetalhesProduto;
-
-
