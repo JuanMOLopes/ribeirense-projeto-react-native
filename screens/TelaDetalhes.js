@@ -110,7 +110,7 @@ function TelaDetalhesProduto({ route, navigation }) {
 const adicionarAosDesejos = async () => {
   try {
     // pega a lista já existente
-    const listaDesejosString = await AsyncStorage.getItem('listaDesejos');
+    const listaDesejosString = await AsyncStorage.getItem('dadosProdutoSalvo');
     const listaDesejos = listaDesejosString ? JSON.parse(listaDesejosString) : [];
 
     // verifica se já existe na lista
@@ -123,7 +123,7 @@ const adicionarAosDesejos = async () => {
     // adiciona o novo produto
     listaDesejos.push(produtoSelecionado);
 
-    await AsyncStorage.setItem('listaDesejos', JSON.stringify(listaDesejos));
+    await AsyncStorage.setItem('dadosProdutoSalvo', JSON.stringify(listaDesejos));
 
     Alert.alert('Sucesso', `${produtoSelecionado.nome} adicionado à lista de desejos!`);
   } catch (e) {
