@@ -62,32 +62,6 @@ function TelaDetalhesProduto({ route, navigation }) {
           const dados = JSON.parse(dadosEmString);
           setProdutosSalvosCarregados(dados); // joga para dentro do estado
         } else {
-          Alert.alert('Aviso', 'Nenhum dado encontrado.');
-          setProdutosSalvosCarregados(null);
-        }
-      } catch (e) {
-        Alert.alert('Erro', 'Falha ao carregar dados.');
-        console.error(e);
-      }
-    };
-
-    console.log(produtosSalvosCarregados); // pega todos os dados e exibe no console
-    carregarDadosProduto(); //executa a função de cima
-  }, []);
-
-  // Carregar dados do produto
-  useEffect(() => {
-    // Função para carregar os dados do AsyncStorage, é executado quando a página carrega ****
-    const carregarDadosProduto = async () => {
-      try {
-        // Busca a string salva no AsyncStorage com a chave 'dadosProdutoSalvo'
-        // Acessa o async storage (onde estão salvos os dados do produto salvo) e pega as informações (getItem)
-        const dadosEmString = await AsyncStorage.getItem('dadosProdutoSalvo');
-        if (dadosEmString !== null) {
-          // Converte a string de volta para um objeto (JSON.parse)
-          const dados = JSON.parse(dadosEmString);
-          setProdutosSalvosCarregados(dados); // joga para dentro do estado
-        } else {
           setProdutosSalvosCarregados(null);
         }
       } catch (e) {
