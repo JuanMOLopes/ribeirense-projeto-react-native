@@ -29,7 +29,6 @@ function TelaListaProdutos({ navigation }) {
           // Converte a string de volta para um objeto (JSON.parse)
           const dados = JSON.parse(dadosEmString);
           setDadosCarregados(dados);
-          Alert.alert('Sucesso', 'Dados carregados!');
         } else {
           Alert.alert('Aviso', 'Nenhum dado encontrado.');
           setDadosCarregados(null);
@@ -180,6 +179,13 @@ function TelaListaProdutos({ navigation }) {
     });
   };
 
+  const abrirFavoritos = () => {
+    navigation.navigate('ListaDeDesejos', {
+      origemNavegacao: 'lista_produtos',
+      timestampVisita: Date.now(),
+    });
+  };
+
   const renderizarProduto = ({ item }) => (
     <TouchableOpacity
       style={estilos.itemProduto}
@@ -211,6 +217,10 @@ function TelaListaProdutos({ navigation }) {
             Seja bem vindo, {dadosCarregados ? dadosCarregados.apelido : ''}!
           </Text>
         </View>
+
+        <TouchableOpacity onPress={() => abrirFavoritos()}>
+          <Text>Ir para Favoritos</Text>
+        </TouchableOpacity>
 
         <FlatList
           data={produtos}
