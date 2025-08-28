@@ -14,7 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function TelaDetalhesProduto({ route, navigation }) {
   // Estado que armazenará os dados do async storage
-  const [dadosCarregados, setDadosCarregados] = useState(null);
+  const [dadosCarregados, setDadosCarregados] = useState(null); // cria um estado que se inicia nulo
 
   const { produtoSelecionado } = route.params;
   const [quantidade, setQuantidade] = useState(1);
@@ -23,7 +23,7 @@ function TelaDetalhesProduto({ route, navigation }) {
   const [tela, setTela] = useState(Dimensions.get('window'));
 
   useEffect(() => {
-    // Função para carregar os dados do AsyncStorage
+    // Função para carregar os dados do AsyncStorage, é executado quando a página carrega **** 
     const carregarDados = async () => {
       try {
         // Busca a string salva no AsyncStorage com a chave 'dadosDoUsuario'
@@ -31,8 +31,7 @@ function TelaDetalhesProduto({ route, navigation }) {
         if (dadosEmString !== null) {
           // Converte a string de volta para um objeto (JSON.parse)
           const dados = JSON.parse(dadosEmString);
-          setDadosCarregados(dados);
-          Alert.alert('Sucesso', 'Dados carregados!');
+          setDadosCarregados(dados); // joga para dentro do estado
         } else {
           Alert.alert('Aviso', 'Nenhum dado encontrado.');
           setDadosCarregados(null);
@@ -43,8 +42,8 @@ function TelaDetalhesProduto({ route, navigation }) {
       }
     };
 
-    console.log(dadosCarregados);
-    carregarDados();
+    console.log(dadosCarregados); // pega todos os dados e exibe no console 
+    carregarDados(); //executa a função de cima 
   }, []);
 
   useEffect(() => {
@@ -55,10 +54,18 @@ function TelaDetalhesProduto({ route, navigation }) {
 
   const paisagem = tela.width > tela.height;
 
-  const adicionarAoCarrinho = () => {
+  const adicionarALista = () => {
     Alert.alert(
       'Sucesso! 🎉',
-      `${quantidade} ${produtoSelecionado.nome} adicionado(s) ao carrinho!`,
+      `${quantidade} ${produtoSelecionado.nome} adicionado(s) a lista de desejos!`,
+      [{ text: 'Continuar Comprando', onPress: () => navigation.goBack() }]
+    );
+  };
+
+  const removerDalista = () => {
+    Alert.alert(
+      'Sucesso! 🎉',
+      `${quantidade} ${produtoSelecionado.nome} removido(s) da lista de desejos!`,
       [{ text: 'Continuar Comprando', onPress: () => navigation.goBack() }]
     );
   };
@@ -134,12 +141,20 @@ function TelaDetalhesProduto({ route, navigation }) {
         </View>
       </View>
 
-      {/* Botão adicionar ao carrinho */}
+      {/* Botão adicionar a lista de desejo */}
       <TouchableOpacity
         style={estilos.botaoComprar}
-        onPress={adicionarAoCarrinho}>
-        <Text style={estilos.textoBotaoComprar}>🛒 Adicionar ao carrinho</Text>
+        onPress={adicionarALista}>
+        <Text style={estilos.textoBotaoComprar}>🛒 Adicionar a lista de desejos</Text>
       </TouchableOpacity>
+
+ {/* Botão rmover da lsita de desejos */}
+      <TouchableOpacity
+        style={estilos.botaoRemover}
+        onPress={removerDalista}>
+        <Text style={estilos.textoBotaoComprar}>🛒 Remover da lista de desejos</Text>
+      </TouchableOpacity>
+
 
       {/* Feedback de rotação */}
       <View
@@ -270,6 +285,14 @@ const estilos = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
   },
+
+  botaoRemover: {
+    backgroundColor: '#FF0000',
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+
   textoBotaoComprar: {
     color: '#FFF',
     fontSize: 18,
