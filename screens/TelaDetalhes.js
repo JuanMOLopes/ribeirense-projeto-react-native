@@ -74,6 +74,31 @@ function TelaDetalhesProduto({ route, navigation }) {
     carregarDadosProduto(); //executa a função de cima 
   }, []);
 
+  // Carregar dados do produto
+  useEffect(() => {
+    // Função para carregar os dados do AsyncStorage, é executado quando a página carrega ****
+    const carregarDadosProduto = async () => {
+      try {
+        // Busca a string salva no AsyncStorage com a chave 'dadosProdutoSalvo'
+        // Acessa o async storage (onde estão salvos os dados do produto salvo) e pega as informações (getItem)
+        const dadosEmString = await AsyncStorage.getItem('dadosProdutoSalvo');
+        if (dadosEmString !== null) {
+          // Converte a string de volta para um objeto (JSON.parse)
+          const dados = JSON.parse(dadosEmString);
+          setProdutosSalvosCarregados(dados); // joga para dentro do estado
+        } else {
+          setProdutosSalvosCarregados(null);
+        }
+      } catch (e) {
+        Alert.alert('Erro', 'Falha ao carregar dados.');
+        console.error(e);
+      }
+    };
+
+    console.log(produtosSalvosCarregados); // pega todos os dados e exibe no console
+    carregarDadosProduto(); //executa a função de cima
+  }, []);
+
   useEffect(() => {
     const callback = ({ window }) => setTela(window);
     const subscription = Dimensions.addEventListener('change', callback);
@@ -107,8 +132,11 @@ const adicionarAosDesejos = async () => {
   }
 };
 
-  const removerDalista = () => {
-
+  // função de remover da lista que usa o id como parâmetro
+  const removerDalista = (id) => {
+    // na lista de salvos eu devolvo todos os ids que não forem o do selecionado
+    const listaAtualizada = produtosSalvosCarregados.filter((_, e) => e !== id);
+    AsyncStorage.setItem('dadosDoUsuario', dadosEmString);
 
     Alert.alert(
       'Sucesso! 🎉',
@@ -363,4 +391,5 @@ const estilos = StyleSheet.create({
 });
 
 export default TelaDetalhesProduto;
+
 
