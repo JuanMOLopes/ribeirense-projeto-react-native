@@ -15,6 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 function TelaDetalhesProduto({ route, navigation }) {
   // Estado que armazenará os dados do async storage
   const [dadosCarregados, setDadosCarregados] = useState(null); // cria um estado que se inicia nulo
+  const [produtosSalvosCarregados, setProdutosSalvosCarregados] = useState(null); // cria um estado que se inicia nulo para pegar todos os produtos salvos
 
   const { produtoSelecionado } = route.params;
   const [quantidade, setQuantidade] = useState(1);
@@ -22,6 +23,7 @@ function TelaDetalhesProduto({ route, navigation }) {
   // Rotação da tela
   const [tela, setTela] = useState(Dimensions.get('window'));
 
+// Carregar dados do usuário
   useEffect(() => {
     // Função para carregar os dados do AsyncStorage, é executado quando a página carrega **** 
     const carregarDados = async () => {
@@ -46,6 +48,32 @@ function TelaDetalhesProduto({ route, navigation }) {
     carregarDados(); //executa a função de cima 
   }, []);
 
+// Carregar dados do produto
+  useEffect(() => {
+    // Função para carregar os dados do AsyncStorage, é executado quando a página carrega **** 
+    const carregarDadosProduto = async () => {
+      try {
+        // Busca a string salva no AsyncStorage com a chave 'dadosProdutoSalvo'
+        // Acessa o async storage (onde estão salvos os dados do produto salvo) e pega as informações (getItem)
+        const dadosEmString = await AsyncStorage.getItem('dadosProdutoSalvo');
+        if (dadosEmString !== null) {
+          // Converte a string de volta para um objeto (JSON.parse)
+          const dados = JSON.parse(dadosEmString);
+          setProdutosSalvosCarregados(dados); // joga para dentro do estado
+        } else {
+          Alert.alert('Aviso', 'Nenhum dado encontrado.');
+          setProdutosSalvosCarregados(null);
+        }
+      } catch (e) {
+        Alert.alert('Erro', 'Falha ao carregar dados.');
+        console.error(e);
+      }
+    };
+
+    console.log(produtosSalvosCarregados); // pega todos os dados e exibe no console 
+    carregarDadosProduto(); //executa a função de cima 
+  }, []);
+
   useEffect(() => {
     const callback = ({ window }) => setTela(window);
     const subscription = Dimensions.addEventListener('change', callback);
@@ -63,6 +91,8 @@ function TelaDetalhesProduto({ route, navigation }) {
   };
 
   const removerDalista = () => {
+
+
     Alert.alert(
       'Sucesso! 🎉',
       `${quantidade} ${produtoSelecionado.nome} removido(s) da lista de desejos!`,
