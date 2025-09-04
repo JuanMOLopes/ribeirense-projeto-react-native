@@ -88,17 +88,18 @@ export default function App() {
 
       try {
         await db.execAsync(`
-          CREATE TABLE IF NOT EXISTS produtos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
-            preco REAL NOT NULL,
-            imagem TEXT,
-            descricao TEXT,
-            estoque REAL NOT NULL,
-            cor TEXT,
-            categoria TEXT,
-            tamanhos TEXT
-          );
+            CREATE TABLE IF NOT EXISTS produtos (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              nome TEXT NOT NULL,
+              preco REAL NOT NULL,
+              imagem TEXT,
+              descricao TEXT,
+              estoque REAL NOT NULL,
+              cor TEXT,
+              categoria TEXT,
+              tamanhos TEXT,
+              modelo TEXT
+            );
         `);
 
         const resultado = await db.getAllAsync(

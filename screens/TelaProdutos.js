@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -50,11 +49,6 @@ function TelaListaProdutos({ navigation }) {
     carregarProdutos();
   }, []);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      carregarProdutos();
-    }, [])
-  );
 
   useEffect(() => {
     const carregarDados = async () => {
