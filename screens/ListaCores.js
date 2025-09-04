@@ -74,7 +74,7 @@ export default function App() {
 // pesquisando funcionarios (cada select é para pesquisar uma informação diferente)
 
 
-  const pesquisarNomeRoupa = async () => {
+  const pesquisarCor = async () => {
     if (!searchText.trim()) {
       Alert.alert('Aviso', 'Digite a cor da peça para pesquisar.');
       return;
