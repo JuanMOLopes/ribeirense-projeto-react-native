@@ -1,6 +1,15 @@
 // Inserir Dados na Tabela com Imagem
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, Alert, ScrollView, Image } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Button,
+  Alert,
+  ScrollView,
+  Image,
+} from 'react-native';
 import * as SQLite from 'expo-sqlite';
 
 let db = null;
@@ -18,27 +27,44 @@ export default function App() {
   const [modelo, setModelo] = useState('');
   const [preco, setPreco] = useState('');
   const [imagem, setImagem] = useState('');
+  const [estoque, setEstoque] = useState('');
+  const [categoria, setCategoria] = useState('');
+  const [descricao, setDescricao] = useState('');
+
+  const precoFloat = parseFloat(preco);
+  const estoqueFloat = parseFloat(estoque);
 
   const Inserir = async () => {
-    if (!nome.trim() || !cor.trim() || !tamanho.trim() || !preco.toString().trim() || !modelo.trim() || !imagem.trim()) {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos');
+    if (
+      !nome.trim() ||
+      !imagem.trim() ||
+      !cor.trim() ||
+      isNaN(precoFloat) ||
+      isNaN(estoqueFloat) ||
+      !categoria.trim() ||
+      !tamanho.trim() ||
+      !descricao.trim()
+    ) {
+      Alert.alert('Erro', 'Por favor, preencha todos os campos corretamente');
       return;
     }
 
     try {
       const conn = await openDb();
       await conn.execAsync(
-        'INSERT INTO produtos (nome, cor, tamanho, modelo, preco, imagem) VALUES (?, ?, ?, ?, ?, ?)',
-        [nome, cor, tamanho, modelo, parseFloat(preco), imagem]
+        'INSERT INTO produtos (nome, imagem, cor, preco, estoque, categoria, tamanhos, descricao) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [nome, imagem, cor, preco, estoque, categoria, tamanho, descricao]
       );
 
       Alert.alert('Sucesso', 'Camiseta adicionada com sucesso!');
       setNome('');
-      setCor('');
-      setTamanho('');
-      setModelo('');
-      setPreco('');
       setImagem('');
+      setCor('');
+      setPreco('');
+      setEstoque('');
+      setCategoria('');
+      setTamanho('');
+      setDescricao('');
     } catch (error) {
       Alert.alert('Erro', 'Falha ao adicionar nova camiseta.');
       console.error('Erro ao inserir:', error);
@@ -85,6 +111,26 @@ export default function App() {
         placeholder="URL da imagem"
         value={imagem}
         onChangeText={setImagem}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Estoque"
+        keyboardType="numeric"
+        value={estoque}
+        onChangeText={setEstoque}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Categoria"
+        value={categoria}
+        onChangeText={setCategoria}
+      />
+      <TextInput
+        style={[styles.input, { height: 80 }]}
+        placeholder="Descrição"
+        multiline
+        value={descricao}
+        onChangeText={setDescricao}
       />
 
       {imagem ? (
