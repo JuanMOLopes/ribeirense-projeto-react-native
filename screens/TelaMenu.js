@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
 
+// Essa tela navegue por outras páginas 
 export default function TelaInicial({ navigation }) {
   return (
     <View style={styles.container}>
