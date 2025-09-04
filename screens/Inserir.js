@@ -7,7 +7,7 @@ let db = null;
 
 async function openDb() {
   if (db) return db;
-  db = await SQLite.openDatabaseAsync('meu_banco.db');
+  db = await SQLite.openDatabaseAsync('produtos.db');
   return db;
 }
 
