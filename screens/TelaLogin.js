@@ -81,7 +81,7 @@ function TelaLogin({ navigation }) {
       setTimeout(() => {
         setMensagemModal('');
         setLoading(false);
-        navigation.navigate('TelaProdutos', dadosParaEnviar);
+        navigation.navigate('TelaMenu', dadosParaEnviar);
       }, 2000);
     } else {
       // Se não encontrou o usuário, mostra mensagem de erro
@@ -207,3 +207,4 @@ const estilos = StyleSheet.create({
 });
 
 export default TelaLogin;
+
