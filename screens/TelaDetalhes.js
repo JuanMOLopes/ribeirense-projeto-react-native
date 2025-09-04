@@ -11,6 +11,14 @@ import {
 } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SQLite from 'expo-sqlite';
+
+let db = null;
+async function openDb() {
+  if (db) return db;
+  db = await SQLite.openDatabaseAsync('produtosBanco.db');
+  return db;
+}
 
 function TelaDetalhesProduto({ route, navigation }) {
   // Estado que armazenará os dados do async storage
@@ -73,6 +81,22 @@ function TelaDetalhesProduto({ route, navigation }) {
     console.log(produtosSalvosCarregados); // pega todos os dados e exibe no console
     carregarDadosProduto(); //executa a função de cima
   }, []);
+
+  //função para carregar todos os produtos no banco de dados
+  const deletarProdutoDoBanco = async (id) => {
+    try {
+      const db = await openDb();
+
+      // Deleta o produto com base no id
+      await db.runAsync('DELETE FROM produtos WHERE id = ?', [id]);
+
+      Alert.alert('Sucesso', 'Produto excluído do banco de dados!');
+      navigation.navigate('TelaMenu')
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Erro', 'Falha ao excluir o produto');
+    }
+  };
 
   useEffect(() => {
     const callback = ({ window }) => setTela(window);
@@ -234,6 +258,13 @@ function TelaDetalhesProduto({ route, navigation }) {
         <Text style={estilos.textoBotaoComprar}>
           🛒 Remover da lista de desejos
         </Text>
+      </TouchableOpacity>
+
+      {/* Botão rmover do banco */}
+      <TouchableOpacity
+        style={estilos.botaoRemover}
+        onPress={() => deletarProdutoDoBanco(produtoSelecionado.id)}>
+        <Text style={estilos.textoBotaoComprar}>❌ Excluir produto</Text>
       </TouchableOpacity>
 
       {/* Feedback de rotação */}
