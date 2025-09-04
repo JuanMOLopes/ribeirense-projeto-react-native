@@ -21,14 +21,14 @@ export default function App() {
     async function setupDatabase() {
       try {
         // Abrindo o banco de dados de forma segura
-        const database = await SQLite.openDatabaseAsync('produos.db');
+        const database = await SQLite.openDatabaseAsync('produtos.db');
         
         // Armazenando a referência do banco de dados no estado
         setDb(database);
         
         // Opcional: Criar a tabela se ela ainda não existir
         await database.execAsync(`
-          CREATE TABLE IF NOT EXISTS funcionarios (
+          CREATE TABLE IF NOT EXISTS produtos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
             preco REAL NOT NULL,
