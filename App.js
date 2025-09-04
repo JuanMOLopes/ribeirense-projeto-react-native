@@ -5,7 +5,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import TelaLogin from './screens/TelaLogin';
 import TelaProdutos from './screens/TelaProdutos';
 import TelaDetalhes from './screens/TelaDetalhes';
-import ListaDeDesejos from './screens/ListaDeDesejos'
+import ListaDeDesejos from './screens/ListaDeDesejos';
+import TelaMenu from './screens/TelaMenu';
 
 const Stack = createStackNavigator();
 
@@ -18,8 +19,15 @@ export default function App() {
           component={TelaLogin}
           options={{ title: 'Login' }}
         />
+         
+         <Stack.Screen
+          name="TelaMenu"
+          component={TelaMenu}
+          options={{ title: 'Menu' }}
+        />
+
         <Stack.Screen
-          name="TelaProdutos"
+          name="ListaCamisetas"
           component={TelaProdutos}
           options={{ title: 'Produtos' }}
         />
@@ -28,6 +36,25 @@ export default function App() {
           component={TelaDetalhes}
           options={{ title: 'Detalhes' }}
         />
+
+ <Stack.Screen
+          name="Inserir"
+          component={Inserir}
+          options={{ title: 'inserir camisetas' }}
+        />
+
+         <Stack.Screen
+          name="ListaNome"
+          component={ListaNome}
+          options={{ title: 'Listar nome' }}
+        />
+
+         <Stack.Screen
+          name="ListaCores"
+          component={ListaCores}
+          options={{ title: 'Listar cores' }}
+        />
+
         <Stack.Screen
           name="ListaDeDesejos"
           component={ListaDeDesejos}
