@@ -26,19 +26,24 @@ function TelaListaProdutos({ navigation }) {
   const [dadosCarregados, setDadosCarregados] = useState(null);
   const [tela, setTela] = useState(Dimensions.get('window'));
   const [produtos, setProduto] = useState([]);
-
+  
+//função para carregar todos os trodutos no banco de dados 
   const carregarProdutos = async () => {
     try {
+      //aconst db tenta fazer a conexão com o banco de dados 
       const db = await openDb();
+      //Se a conexão der certo o SELECT pega todos os produtos
       const resultado = await db.getAllAsync('SELECT * FROM produtos');
+      //tenta pegar todas as linhas da tabela em lista 
       const lista = resultado.rows || resultado;
+      //atualiza a lista 
       setProduto(lista);
     } catch (error) {
       console.error(error);
       Alert.alert('Erro', 'Falha ao carregar produtos');
     }
   };
-
+//toda vez que a página atualizar vai acontecer os itens anteriores 
   useEffect(() => {
     carregarProdutos();
   }, []);
@@ -245,3 +250,4 @@ const estilos = StyleSheet.create({
     marginVertical: 2,
   },
 });
+
