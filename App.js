@@ -5,6 +5,11 @@ import { createStackNavigator } from '@react-navigation/stack';
 import TelaLogin from './screens/TelaLogin';
 import TelaProdutos from './screens/TelaProdutos';
 import TelaDetalhes from './screens/TelaDetalhes';
+import TelaMenu from './screens/TelaMenu';
+import Inserir from './screens/Inserir';
+import ListaNome from './screens/ListaNome';
+import ListaCores from './screens/ListaCores';
+import ListaDeDesejos from './screens/ListaDeDesejos';
 
 import * as SQLite from 'expo-sqlite';
 
