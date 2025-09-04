@@ -13,7 +13,6 @@ import {
 import * as SQLite from 'expo-sqlite';
 
 let db = null;
-
 async function openDb() {
   if (db) return db;
   db = await SQLite.openDatabaseAsync('produtosBanco.db');
