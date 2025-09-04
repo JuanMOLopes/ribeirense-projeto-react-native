@@ -1,23 +1,15 @@
-// Inserir Dados na Tabela com Imagem
-import React, { useState } from 'react';
+// InsertAsync.js
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
-  View,
+  ScrollView,
   TextInput,
   Button,
   Alert,
-  ScrollView,
   Image,
 } from 'react-native';
-import * as SQLite from 'expo-sqlite';
-
-let db = null;
-async function openDb() {
-  if (db) return db;
-  db = await SQLite.openDatabaseAsync('produtosBanco.db');
-  return db;
-}
+import SQLite from 'expo-sqlite'; // biblioteca assíncrona
 
 export default function App() {
   const [nome, setNome] = useState('');
@@ -30,16 +22,46 @@ export default function App() {
   const [categoria, setCategoria] = useState('');
   const [descricao, setDescricao] = useState('');
 
-  const precoFloat = parseFloat(preco);
-  const estoqueFloat = parseFloat(estoque);
+  let db;
+
+  // Criar tabela ao montar o componente
+  useEffect(() => {
+    async function setupDb() {
+      try {
+        db = await SQLite.openDatabaseAsync('produtosBanco.db');
+        await db.execAsync(`
+          CREATE TABLE IF NOT EXISTS produtos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT,
+            imagem TEXT,
+            cor TEXT,
+            preco REAL,
+            estoque INTEGER,
+            categoria TEXT,
+            tamanho TEXT,
+            descricao TEXT,
+            modelo TEXT
+          );
+        `);
+        console.log('✅ Tabela criada com sucesso');
+      } catch (err) {
+        console.error('❌ Erro ao criar tabela:', err);
+        Alert.alert('Erro', 'Não foi possível criar a tabela');
+      }
+    }
+    setupDb();
+  }, []);
 
   const Inserir = async () => {
+    const precoFloat = parseFloat(preco);
+    const estoqueInt = parseInt(estoque);
+
     if (
       !nome.trim() ||
       !imagem.trim() ||
       !cor.trim() ||
       isNaN(precoFloat) ||
-      isNaN(estoqueFloat) ||
+      isNaN(estoqueInt) ||
       !categoria.trim() ||
       !tamanho.trim() ||
       !descricao.trim()
@@ -49,25 +71,21 @@ export default function App() {
     }
 
     try {
-      const conn = await openDb();
-        await conn.execAsync(
-          'INSERT INTO produtos (nome, imagem, cor, preco, estoque, categoria, tamanhos, descricao, modelo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          [nome, imagem, cor, preco, estoque, categoria, tamanho, descricao, modelo]
-        );
+      db = await SQLite.openDatabaseAsync('produtosBanco.db');
+      await db.runAsync(
+        `INSERT INTO produtos (nome, imagem, cor, preco, estoque, categoria, tamanho, descricao, modelo)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [nome, imagem, cor, precoFloat, estoqueInt, categoria, tamanho, descricao, modelo]
+      );
 
       Alert.alert('Sucesso', 'Camiseta adicionada com sucesso!');
-      setNome('');
-      setImagem('');
-      setCor('');
-      setPreco('');
-      setEstoque('');
-      setCategoria('');
-      setTamanho('');
-      setDescricao('');
-        setModelo('');
-    } catch (error) {
-      Alert.alert('Erro', 'Falha ao adicionar nova camiseta.');
-      console.error('Erro ao inserir:', error);
+      // Limpar campos
+      setNome(''); setPreco(''); setImagem(''); setCor('');
+      setTamanho(''); setModelo(''); setEstoque('');
+      setCategoria(''); setDescricao('');
+    } catch (err) {
+      console.error('❌ Erro ao inserir:', err);
+      Alert.alert('Erro', 'Falha ao inserir camiseta');
     }
   };
 
@@ -75,70 +93,18 @@ export default function App() {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Adicionar Nova Camiseta</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Nome da camiseta"
-        value={nome}
-        onChangeText={setNome}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Preço"
-        keyboardType="numeric"
-        value={preco}
-        onChangeText={setPreco}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Tamanho"
-        value={tamanho}
-        onChangeText={setTamanho}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Cor"
-        value={cor}
-        onChangeText={setCor}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Modelo (F/M)"
-        value={modelo}
-        onChangeText={setModelo}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="URL da imagem"
-        value={imagem}
-        onChangeText={setImagem}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Estoque"
-        keyboardType="numeric"
-        value={estoque}
-        onChangeText={setEstoque}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Categoria"
-        value={categoria}
-        onChangeText={setCategoria}
-      />
-      <TextInput
-        style={[styles.input, { height: 80 }]}
-        placeholder="Descrição"
-        multiline
-        value={descricao}
-        onChangeText={setDescricao}
-      />
+      <TextInput style={styles.input} placeholder="Nome da camiseta" value={nome} onChangeText={setNome} />
+      <TextInput style={styles.input} placeholder="Preço" keyboardType="numeric" value={preco} onChangeText={setPreco} />
+      <TextInput style={styles.input} placeholder="Tamanho" value={tamanho} onChangeText={setTamanho} />
+      <TextInput style={styles.input} placeholder="Cor" value={cor} onChangeText={setCor} />
+      <TextInput style={styles.input} placeholder="Modelo (F/M)" value={modelo} onChangeText={setModelo} />
+      <TextInput style={styles.input} placeholder="URL da imagem" value={imagem} onChangeText={setImagem} />
+      <TextInput style={styles.input} placeholder="Estoque" keyboardType="numeric" value={estoque} onChangeText={setEstoque} />
+      <TextInput style={styles.input} placeholder="Categoria" value={categoria} onChangeText={setCategoria} />
+      <TextInput style={[styles.input, { height: 80 }]} placeholder="Descrição" multiline value={descricao} onChangeText={setDescricao} />
 
       {imagem ? (
-        <Image
-          source={{ uri: imagem }}
-          style={{ width: 200, height: 200, marginBottom: 10, borderRadius: 8 }}
-          resizeMode="contain"
-        />
+        <Image source={{ uri: imagem }} style={{ width: 200, height: 200, marginBottom: 10, borderRadius: 8 }} resizeMode="contain" />
       ) : null}
 
       <Button title="Adicionar Camiseta" onPress={Inserir} />
@@ -147,25 +113,7 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  input: {
-    width: '100%',
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-  },
+  container: { flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
+  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
+  input: { width: '100%', height: 40, borderColor: 'gray', borderWidth: 1, borderRadius: 5, paddingHorizontal: 10, marginBottom: 10 },
 });
