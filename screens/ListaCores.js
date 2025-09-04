@@ -4,56 +4,44 @@ import { StyleSheet, Text, View, TextInput, Button, FlatList, Alert } from 'reac
 import * as SQLite from 'expo-sqlite';
 
 export default function App() {
-  // Estado para armazenar a conexão com o banco de dados
-  const [db, setDb] = useState(null);
-  
-  // Estado para armazenar os resultados da consulta
-  const [results, setResults] = useState([]);
-  
-  // Estados para os campos de pesquisa
-  const [searchText, setSearchText] = useState('');
-  
-  // Estado para a mensagem de status 
-  const [status, setStatus] = useState('Inicializando...');
+  const [db, setDb] = useState(null);       // Estado do banco
+  const [results, setResults] = useState([]); // Resultados da consulta
+  const [searchText, setSearchText] = useState(''); // Texto da pesquisa
+  const [status, setStatus] = useState('Inicializando...'); // Status
 
-  // --- Efeito para inicializar o banco de dados uma única vez ---
+  // --- Inicializar banco uma vez ---
   useEffect(() => {
     async function setupDatabase() {
       try {
-        // Abrindo o banco de dados de forma segura
         const database = await SQLite.openDatabaseAsync('produtosBanco.db');
-        
-        // Armazenando a referência do banco de dados no estado
         setDb(database);
-        
-        // Opcional: Criar a tabela se ela ainda não existir
+
+        // Criar tabela corrigida (sem vírgula no final)
         await database.execAsync(`
           CREATE TABLE IF NOT EXISTS produtos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
             preco REAL NOT NULL,
-            imagem  TEXT,
+            imagem TEXT,
             descricao TEXT,
             estoque REAL NOT NULL,
             cor TEXT,
-            categoria TEXT,
+            categoria TEXT
           );
         `);
-        setStatus('✅ Banco de dados e tabela prontos!');
 
+        setStatus('✅ Banco de dados e tabela prontos!');
       } catch (error) {
-        console.error('Erro ao conectar ou criar tabela:', error);
-        setStatus('❌ Erro ao inicializar o banco de dados. Veja o log.');
-        Alert.alert('Erro', 'Não foi possível conectar ao banco de dados.');
+        console.error('Erro ao inicializar DB:', error);
+        setStatus('❌ Falha ao inicializar o banco de dados');
       }
     }
-    // Chamando a função de setup
-    setupDatabase();
-  }, []); // O array vazio garante que isso rode apenas na primeira renderização
 
-  // --- Função genérica para executar consultas ---
+    setupDatabase();
+  }, []);
+
+  // --- Função para consultas ---
   const executarConsulta = async (query, params = []) => {
-    // Acessando a conexão do estado e verificando se ela existe
     if (!db) {
       Alert.alert('Erro', 'O banco de dados não está pronto.');
       return;
@@ -71,50 +59,43 @@ export default function App() {
     }
   };
 
-// pesquisando funcionarios (cada select é para pesquisar uma informação diferente)
-
-
+  // --- Pesquisar por cor ---
   const pesquisarCor = async () => {
     if (!searchText.trim()) {
       Alert.alert('Aviso', 'Digite a cor da peça para pesquisar.');
       return;
     }
-    // Usando LIKE e o parâmetro `?` para evitar SQL Injection 
-    
     await executarConsulta('SELECT * FROM produtos WHERE cor LIKE ?;', [`%${searchText}%`]);
   };
 
-  
-
-
-
+  // --- Renderizar item da lista ---
   const renderItem = ({ item }) => (
     <View style={styles.item}>
       <Text>ID: {item.id}</Text>
+      <Text>Nome: {item.nome}</Text>
       <Text>Cor: {item.cor}</Text>
+      <Text>Preço: R$ {item.preco}</Text>
     </View>
   );
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Pesquisar peças por cor</Text>
-      <Text style={styles.statusText}>{status}</Text> {/* Exibindo o status da conexão */}
+      <Text style={styles.statusText}>{status}</Text>
 
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Cor da peça"
+          placeholder="Digite a cor"
           value={searchText}
           onChangeText={setSearchText}
         />
       </View>
-      
+
       <View style={styles.buttonContainer}>
-        {/* Desabilitando os botões se a conexão não estiver pronta */}
         <Button title="Pesquisar Cor" onPress={pesquisarCor} disabled={!db} />
-        
       </View>
-      
+
       <FlatList
         style={styles.list}
         data={results}
@@ -144,7 +125,6 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
   searchContainer: {
-    flexDirection: 'column',
     marginBottom: 10,
   },
   input: {
@@ -156,8 +136,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   buttonContainer: {
-    flexDirection: 'column',
-    gap: 10,
     marginBottom: 20,
   },
   list: {
