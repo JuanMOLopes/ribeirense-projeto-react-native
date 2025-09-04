@@ -26,7 +26,9 @@ export default function App() {
             descricao TEXT,
             estoque REAL NOT NULL,
             cor TEXT,
-            categoria TEXT
+            categoria TEXT,
+            tamanhos TEXT,
+            modelo TEXT
           );
         `);
 
