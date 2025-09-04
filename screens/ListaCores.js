@@ -21,7 +21,7 @@ export default function App() {
     async function setupDatabase() {
       try {
         // Abrindo o banco de dados de forma segura
-        const database = await SQLite.openDatabaseAsync('produtos.db');
+        const database = await SQLite.openDatabaseAsync('produtosBanco.db');
         
         // Armazenando a referência do banco de dados no estado
         setDb(database);
