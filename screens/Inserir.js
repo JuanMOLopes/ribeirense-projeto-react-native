@@ -50,10 +50,10 @@ export default function App() {
 
     try {
       const conn = await openDb();
-      await conn.execAsync(
-        'INSERT INTO produtos (nome, imagem, cor, preco, estoque, categoria, tamanhos, descricao) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-        [nome, imagem, cor, preco, estoque, categoria, tamanho, descricao]
-      );
+        await conn.execAsync(
+          'INSERT INTO produtos (nome, imagem, cor, preco, estoque, categoria, tamanhos, descricao, modelo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          [nome, imagem, cor, preco, estoque, categoria, tamanho, descricao, modelo]
+        );
 
       Alert.alert('Sucesso', 'Camiseta adicionada com sucesso!');
       setNome('');
@@ -64,6 +64,7 @@ export default function App() {
       setCategoria('');
       setTamanho('');
       setDescricao('');
+        setModelo('');
     } catch (error) {
       Alert.alert('Erro', 'Falha ao adicionar nova camiseta.');
       console.error('Erro ao inserir:', error);
