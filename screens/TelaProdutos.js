@@ -28,10 +28,10 @@ function TelaListaProdutos({ navigation }) {
   const [tela, setTela] = useState(Dimensions.get('window'));
   const [produtos, setProduto] = useState([]);
   
-//função para carregar todos os trodutos no banco de dados 
+//função para carregar todos os produtos no banco de dados 
   const carregarProdutos = async () => {
     try {
-      //aconst db tenta fazer a conexão com o banco de dados 
+      //a const db tenta fazer a conexão com o banco de dados 
       const db = await openDb();
       //Se a conexão der certo o SELECT pega todos os produtos
       const resultado = await db.getAllAsync('SELECT * FROM produtos');
@@ -258,4 +258,5 @@ const estilos = StyleSheet.create({
     marginVertical: 2,
   },
 });
+
 
