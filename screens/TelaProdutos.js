@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -44,9 +45,16 @@ function TelaListaProdutos({ navigation }) {
     }
   };
 //toda vez que a página atualizar vai acontecer os itens anteriores 
+
   useEffect(() => {
     carregarProdutos();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      carregarProdutos();
+    }, [])
+  );
 
   useEffect(() => {
     const carregarDados = async () => {
