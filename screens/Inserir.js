@@ -1,4 +1,3 @@
-// InsertAsync.js
 import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
@@ -9,7 +8,7 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import SQLite from 'expo-sqlite'; // biblioteca assíncrona
+import SQLite from 'expo-sqlite'; 
 
 export default function App() {
   const [nome, setNome] = useState('');
@@ -24,7 +23,6 @@ export default function App() {
 
   let db;
 
-  // Criar tabela ao montar o componente
   useEffect(() => {
     async function setupDb() {
       try {
@@ -38,7 +36,7 @@ export default function App() {
             preco REAL,
             estoque INTEGER,
             categoria TEXT,
-            tamanho TEXT,
+            tamanhos TEXT,
             descricao TEXT,
             modelo TEXT
           );
@@ -73,13 +71,13 @@ export default function App() {
     try {
       db = await SQLite.openDatabaseAsync('produtosBanco.db');
       await db.runAsync(
-        `INSERT INTO produtos (nome, imagem, cor, preco, estoque, categoria, tamanho, descricao, modelo)
+        `INSERT INTO produtos (nome, imagem, cor, preco, estoque, categoria, tamanhos, descricao, modelo)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [nome, imagem, cor, precoFloat, estoqueInt, categoria, tamanho, descricao, modelo]
       );
 
       Alert.alert('Sucesso', 'Camiseta adicionada com sucesso!');
-      // Limpar campos
+  
       setNome(''); setPreco(''); setImagem(''); setCor('');
       setTamanho(''); setModelo(''); setEstoque('');
       setCategoria(''); setDescricao('');
